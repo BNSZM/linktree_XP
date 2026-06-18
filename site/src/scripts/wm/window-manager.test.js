@@ -227,10 +227,10 @@ describe("WindowManager openOrFocus / lazy / init (task 7.2)", () => {
     expect(wm.findInstanceByAppId("pdf-overseas")).toBeUndefined();
   });
 
-  it("init does NOT auto-open Main_Window on mobile", () => {
+  it("init auto-opens Main_Window on mobile (全屏名片)", () => {
     const wm = makeWM({ isMobile: () => true });
     wm.init();
-    expect(wm.getInstances().size).toBe(0);
+    expect(wm.getInstances().size).toBe(1);
   });
 
   it("init is idempotent (does not open duplicate Main_Window)", () => {

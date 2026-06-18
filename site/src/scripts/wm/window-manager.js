@@ -1244,10 +1244,9 @@ export function createWindowManager(options = {}) {
     // 其余全局事件绑定的扩展点：
     //   - 最大化几何随视口/任务栏变化的重算 → 任务 9.3
 
-    // 非移动端：自动「仅」实例化并打开主窗口（Req 8.1）。其余窗口保持懒实例化。
-    if (!isMobile()) {
-      openOrFocus("main");
-    }
+    // 自动打开主窗口（桌面端全屏名片 + 移动端全屏名片，Req 8.1）。
+    // 其余窗口保持懒实例化。
+    openOrFocus("main");
 
     return api;
   }

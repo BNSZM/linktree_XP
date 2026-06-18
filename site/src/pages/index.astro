@@ -10,7 +10,7 @@ import PixelBliss from "../components/PixelBliss.astro";
 import DesktopIcons from "../components/DesktopIcons.astro";
 import XPTaskbar from "../components/XPTaskbar.astro";
 import XPWindow from "../components/XPWindow.astro";
-import MobileNav from "../components/MobileNav.astro";
+import MobileStart from "../components/MobileStart.astro";
 import { DEFAULT_LANG, t } from "../i18n/strings.js";
 const ss = DEFAULT_LANG;
 ---
@@ -44,8 +44,8 @@ const ss = DEFAULT_LANG;
     <!-- ══ XP 任务栏（桌面端显示，移动端隐藏） ══ -->
     <XPTaskbar />
 
-    <!-- ══ 移动端底部 Tab 栏（桌面端隐藏） ══ -->
-    <MobileNav />
+    <!-- ══ 移动端悬浮开始按钮 + 菜单（桌面端隐藏） ══ -->
+    <MobileStart />
 
     <!-- ══ 可复用 XP 窗口模板（隐藏 <template>，供 WindowManager 运行时克隆） ══ -->
     <XPWindow />
@@ -55,7 +55,7 @@ const ss = DEFAULT_LANG;
       import { initI18n, S, toast, getCurrentLang } from "../scripts/i18n.js";
       import { initCopy } from "../scripts/copy.js";
       import { initDesktopIcons } from "../scripts/desktop-icons.js";
-      import { initMobileNav } from "../scripts/mobile-nav.js";
+      import { initMobileStart } from "../scripts/mobile-start.js";
       import { createWindowManager } from "../scripts/wm/window-manager.js";
       import { APP_REGISTRY } from "../scripts/wm/registry.js";
 
@@ -117,9 +117,23 @@ const ss = DEFAULT_LANG;
       // ── 桌面图标接线（双击打开 / 单击选中 / 键盘 Enter·Space 触发）──
       initDesktopIcons(wm);
 
-      // ── 移动端 Tab 导航（底部切换名片/AI助手/更多）──
+      // ── 移动端悬浮开始按钮（左下角） + 键盘防顶起 ──
       if (isMobile()) {
-        initMobileNav(wm);
+        initMobileStart(wm);
+
+        // 防止 iOS Safari 键盘弹出顶起页面：
+        // 监听 visualViewport 变化（键盘出现时视口缩小），
+        // 把桌面容器高度锁定为"可见视口高度"，阻止页面滚动。
+        if (window.visualViewport) {
+          const deskEl = document.getElementById("xp-desktop");
+          const updateVH = () => {
+            const vh = window.visualViewport.height;
+            document.documentElement.style.setProperty("--mobile-vh", vh + "px");
+            if (deskEl) deskEl.style.height = vh + "px";
+          };
+          window.visualViewport.addEventListener("resize", updateVH);
+          updateVH();
+        }
       }
     </script>
   </body>

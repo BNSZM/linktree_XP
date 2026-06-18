@@ -1,0 +1,168 @@
+---
+// MobileStart —— 移动端悬浮"开始"按钮 + 弹出菜单（≤768px）
+// 桌面端由 responsive.css 隐藏，不影响现有窗口管理器。
+// 菜单点击逻辑在 mobile-start.js 中接线。
+---
+
+<!-- 悬浮开始按钮（XP 风格，左下角） -->
+<button id="mobile-start-btn" class="mobile-start-btn" type="button" aria-label="开始菜单">
+  <span class="start-flag" aria-hidden="true">⊞</span>
+  <span class="start-text">开始</span>
+</button>
+
+<!-- 弹出菜单 -->
+<div id="mobile-start-menu" class="mobile-start-menu" hidden aria-label="功能菜单">
+  <div class="start-menu-header">
+    <span class="start-menu-title">Linktree XP</span>
+  </div>
+  <div class="start-menu-items" id="start-menu-items">
+    <!-- 菜单项由 JS 动态填充 -->
+  </div>
+</div>
+
+<style>
+  .mobile-start-btn,
+  .mobile-start-menu {
+    display: none; /* 桌面端隐藏 */
+  }
+
+  @media (max-width: 768px) {
+    /* ── 开始按钮：XP 风格，固定左下角 ── */
+    .mobile-start-btn {
+      display: flex;
+      position: fixed;
+      bottom: 12px;
+      left: 12px;
+      z-index: 1000;
+      align-items: center;
+      gap: 4px;
+      height: 36px;
+      padding: 0 14px 0 10px;
+      background: linear-gradient(180deg, #3C873A 0%, #2D6E2B 50%, #245D22 100%);
+      border: none;
+      border-radius: 0 18px 18px 0;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.30),
+        0 2px 8px rgba(0,0,0,0.30);
+      color: #fff;
+      font-family: var(--font, Tahoma, sans-serif);
+      font-size: 13px;
+      font-weight: 700;
+      font-style: italic;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: 0.5px;
+    }
+
+    .mobile-start-btn:active {
+      background: linear-gradient(180deg, #2D6E2B 0%, #245D22 50%, #1A4A18 100%);
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.20),
+        0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    .mobile-start-btn.is-open {
+      background: linear-gradient(180deg, #2D6E2B 0%, #245D22 50%, #1A4A18 100%);
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.25),
+        0 1px 4px rgba(0,0,0,0.25);
+    }
+
+    .start-flag {
+      font-size: 16px;
+      line-height: 1;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
+    }
+
+    .start-text {
+      line-height: 1;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    }
+
+    /* ── 弹出菜单：XP 开始菜单风格 ── */
+    .mobile-start-menu {
+      position: fixed;
+      bottom: 56px;
+      left: 8px;
+      z-index: 1001;
+      min-width: 220px;
+      max-width: 280px;
+      background: #fff;
+      border: 2px solid #3169C6;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 2px 4px 16px rgba(0,0,0,0.30);
+      overflow: hidden;
+    }
+
+    .mobile-start-menu[hidden] {
+      display: none;
+    }
+
+    .start-menu-header {
+      background: linear-gradient(180deg, #3169C6 0%, #1B4EA0 100%);
+      padding: 10px 14px;
+      border-bottom: 1px solid #1B4EA0;
+    }
+
+    .start-menu-title {
+      color: #fff;
+      font-family: var(--font, Tahoma, sans-serif);
+      font-size: 13px;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .start-menu-items {
+      padding: 4px 0;
+    }
+
+    .start-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      font-family: var(--font, Tahoma, sans-serif);
+      font-size: 13px;
+      color: #222;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      text-align: left;
+    }
+
+    .start-menu-item:hover,
+    .start-menu-item:active {
+      background: #3169C6;
+      color: #fff;
+    }
+
+    .start-menu-item-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+
+    .start-menu-item-label {
+      flex: 1;
+    }
+
+    .start-menu-item-hint {
+      font-size: 11px;
+      color: #999;
+      flex-shrink: 0;
+    }
+
+    .start-menu-item:hover .start-menu-item-hint {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .start-menu-sep {
+      height: 1px;
+      margin: 4px 12px;
+      background: #d0d0d0;
+    }
+  }
+</style>

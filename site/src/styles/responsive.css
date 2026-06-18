@@ -1,12 +1,12 @@
 /* ══════════════════════════════════════════════════════════════
    responsive.css — 移动端布局降级（≤768px）
 
-   移动端采用底部 Tab 栏导航（名片 / AI助手 / 更多）：
-     · 窗口填满屏幕（减去 Tab 栏高度），无标题栏
-     · Tab 栏固定底部 56px，z-index 最高
-     · 键盘弹出时用 100svh 防止页面被顶起
+   移动端采用悬浮"开始"按钮 + 弹出菜单导航：
+     · 名片窗口自动打开（全屏），Start 按钮在左下角
+     · 窗口填满屏幕，无标题栏（Start 菜单代替导航）
+     · 键盘弹出时通过 visualViewport API 锁定高度，防止页面被顶起
      · PDF 走 window.open 新标签页
-     · 装饰窗口在"更多"面板中不显示
+     · 装饰窗口标记为 unavailable，不打开
 
    跨切面的移动端覆盖，须在所有基础规则之后引入以保持级联顺序。
    ══════════════════════════════════════════════════════════════ */
@@ -14,32 +14,32 @@
 @media (max-width: 768px) {
   /* ═══════════════════════════════════════════════════
      防止键盘弹出顶起页面：
-     - html/body 不可滚动
-     - 使用 100svh（small viewport height）而非 100dvh，
-       svh 不受键盘出现影响，避免布局跳动
+     html/body 锁定不可滚动，position:fixed 阻止 iOS Safari 的
+     自动滚动行为。键盘出现时 visualViewport 缩小，由 JS 动态
+     调整桌面容器高度（--mobile-vh 变量）。
      ═══════════════════════════════════════════════════ */
   html, body {
-    overflow: hidden;
-    height: 100%;
-    position: fixed;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden !important;
+    height: 100% !important;
+    position: fixed !important;
+    width: 100% !important;
   }
 
   /* ═══════════════════════════════════════════════════
-     桌面容器：填满视口减去 Tab 栏（56px）
+     桌面容器：填满视口（键盘弹出时由 JS 动态设置高度）
      ═══════════════════════════════════════════════════ */
   .xp-desktop {
     position: fixed;
     inset: 0;
-    bottom: 56px;
+    bottom: 0;
     z-index: 1;
     overflow: hidden;
+    /* JS 会动态设置 height: var(--mobile-vh) */
+    height: var(--mobile-vh, 100vh);
   }
 
   /* ═══════════════════════════════════════════════════
-     窗口：填满桌面区域，无边框/标题栏
-     Tab 栏代替窗口标题栏进行导航
+     窗口：填满桌面区域，无边框装饰
      ═══════════════════════════════════════════════════ */
   .xp-win {
     border-radius: 0 !important;
@@ -51,7 +51,7 @@
     top: 0 !important;
   }
 
-  /* 隐藏窗口标题栏（Tab 栏代替导航） */
+  /* 隐藏窗口标题栏（Start 菜单代替导航） */
   .xp-win-titlebar {
     display: none !important;
   }
@@ -61,70 +61,6 @@
     height: 100% !important;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-  }
-
-  /* ═══════════════════════════════════════════════════
-     "更多"功能面板
-     ═══════════════════════════════════════════════════ */
-  .mobile-more-panel {
-    position: fixed;
-    inset: 0;
-    bottom: 56px;
-    z-index: 500;
-    background: #ece9d8;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 16px 12px;
-    padding-top: calc(16px + env(safe-area-inset-top, 0));
-  }
-
-  .mobile-more-panel[hidden] {
-    display: none;
-  }
-
-  .mobile-more-panel h2 {
-    font-family: var(--font, Tahoma, sans-serif);
-    font-size: 15px;
-    font-weight: 700;
-    color: #333;
-    margin: 0 0 12px 4px;
-  }
-
-  .mobile-more-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 14px 16px;
-    margin-bottom: 6px;
-    background: #fff;
-    border: 1px solid #d0cdb8;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: var(--font, Tahoma, sans-serif);
-    font-size: 14px;
-    color: #333;
-    -webkit-tap-highlight-color: transparent;
-    text-align: left;
-  }
-
-  .mobile-more-item:active {
-    background: #e8e5d5;
-  }
-
-  .mobile-more-icon {
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-
-  .mobile-more-label {
-    flex: 1;
-  }
-
-  .mobile-more-hint {
-    font-size: 13px;
-    color: #999;
-    flex-shrink: 0;
   }
 
   /* ═══════════════════════════════════════════════════
@@ -141,8 +77,8 @@
     font-size: 10px;
   }
 
-  /* Toast above tab bar */
+  /* Toast above Start button area */
   .toast {
-    bottom: 68px;
+    bottom: 56px;
   }
 }

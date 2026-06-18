@@ -1,0 +1,18 @@
+services:
+  fastgpt-proxy:
+    build: .
+    container_name: fastgpt-proxy
+    restart: unless-stopped
+    env_file: .env
+    # 留言板需要持久化状态（messages.json，Req 17.4 / 20.3 / 20.4）：
+    # 为代理挂载一个可写命名卷，并将存储路径指向卷内文件，
+    # 使留言跨容器重启 / 重建仍然保留。其余部署模型不变。
+    environment:
+      - MESSAGES_FILE=/app/data/messages.json
+    ports:
+      - "8787:8787"
+    volumes:
+      - messages-data:/app/data
+
+volumes:
+  messages-data:

@@ -1,0 +1,53 @@
+/* ══════════════════════════════════════════════════════════════
+   responsive.css — 移动端布局降级（≤768px）
+   WindowManager 驱动的窗口在移动端的表现：
+     · 桌面容器填满视口（任务栏由自身 @media 隐藏）
+     · 窗口无边框/圆角/阴影，填满屏幕（Req 14.1/14.2）
+     · Chat/Notepad 等对话框窗口大号居中（由窗口自身 minSize 约束，Req 14.3/14.5）
+     · PDF 入口走 window.open 新标签页（由初始化脚本拦截，Req 14.4）
+     · 装饰窗口不可用（由初始化脚本拦截，Req 14.6）
+     · 拖动/调整尺寸/最大化由 WM 内部 isMobile() 守卫禁用（Req 2.5/19.7/22.6）
+     · 语言切换右上角与 Toast 底部中央保持可见（Req 14.7/14.8）
+   跨切面的移动端覆盖，须在所有基础规则之后引入以保持级联顺序。
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════
+   Mobile — WindowManager-driven layout (≤768px)
+   Taskbar & desktop icons hide via their own @media rules.
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Desktop container fills full viewport (no taskbar gap) */
+  .xp-desktop {
+    position: fixed;
+    inset: 0;
+    bottom: 0;
+    z-index: 1;
+    overflow: auto;
+  }
+
+  /* WindowManager windows: edge-to-edge, no frame decorations */
+  .xp-win {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+
+  /* Language toggle: show mobile floating button (Req 14.7) */
+  .lang-toggle--mobile {
+    display: block;
+    position: fixed;
+    top: 6px; right: 6px;
+    z-index: 50;
+    height: 22px;
+    font-size: 10px;
+  }
+
+  /* Toast above bottom of screen (Req 14.8) */
+  .toast {
+    bottom: 12px;
+  }
+}

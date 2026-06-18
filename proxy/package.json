@@ -1,0 +1,18 @@
+{
+  "name": "fastgpt-proxy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "隐藏密钥的 FastGPT 对话代理，前端只调 /api/chat",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "test:run": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "fast-check": "^3.23.2"
+  }
+}

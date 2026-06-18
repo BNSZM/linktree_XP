@@ -1,0 +1,118 @@
+{
+  "_说明": "本文件是页面所有文案与展示内容的唯一编辑处（src/config/content.json）。改完保存后重新构建（npm run build）即生效。注意：这里只放公开展示内容，FastGPT 的 Key 和链接不在这里，在 proxy/.env。",
+
+  "theme": {
+    "_说明": "主题色：accent 主色，accent2 渐变辅色",
+    "accent": "#0284C7",
+    "accent2": "#06B6D4"
+  },
+
+  "profile": {
+    "_说明": "个人信息。avatar 是头像处显示的文字（暂用首字母占位）。name/tagline 分中英文。",
+    "avatar": "PW",
+    "name":    { "zh": "袁培文", "en": "Peiwen Yuan" },
+    "tagline": { "zh": "帮您把 AI 落地到真实的业务场景中", "en": "Make AI work for your business" }
+  },
+
+  "meta": {
+    "_说明": "浏览器标签页标题与网页描述（SEO）",
+    "title": { "zh": "袁培文 · 个人主页", "en": "Peiwen Yuan · Home" },
+    "desc":  { "zh": "袁培文 · 个人主页 — 液态玻璃版", "en": "Peiwen Yuan · personal homepage — liquid glass edition" }
+  },
+
+  "ui": {
+    "_说明": "界面零散文案。langNext 是语言按钮上显示的「将切换到的语言」。",
+    "langNext":      { "zh": "EN", "en": "中" },
+    "langLabel":     { "zh": "切换语言", "en": "Switch language" },
+    "toastCopied":   { "zh": "已复制", "en": "Copied" },
+    "productsTitle": { "zh": "主要项目", "en": "Products" },
+    "footNote":      { "zh": "API · FastGPT · Microsoft 365 · 浙江杭州", "en": "API · FastGPT · Microsoft 365 · Hangzhou, China" },
+    "copyHint":      { "zh": "点击即可复制联系方式", "en": "Tap any icon to copy contact info" },
+    "aboutLabel":    { "zh": "我是", "en": "About Me" },
+    "chatSection":   { "zh": "和我的助理对话", "en": "Chat with My Assistant" }
+  },
+
+  "chat": {
+    "_说明": "对话框相关文案。greeting 是打开对话框时的第一句问候；error 是连接失败时的兜底提示。",
+    "eyebrow":     { "zh": "AI 助手 · 在线", "en": "AI assistant · online" },
+    "entry":       { "zh": "问我产品、方案，或随便聊聊 AI…", "en": "Ask about products, solutions — or just talk AI…" },
+    "title":       { "zh": "和我的工作助手聊聊", "en": "Chat with my work assistant" },
+    "placeholder": { "zh": "输入消息，回车发送…", "en": "Type a message, Enter to send…" },
+    "greeting":    { "zh": "你好，我是袁培文的工作助手。海外大模型中转、FastGPT 商业版、Microsoft 365 Business、定制 AI 方案都能聊；对 AI 感兴趣，随便聊聊也欢迎。想从哪聊起？", "en": "Hi, I'm Peiwen Yuan's work assistant — overseas-LLM relay, FastGPT Commercial, Microsoft 365 Business, custom AI solutions, or just a chat about AI. Where shall we start?" },
+    "error":       { "zh": "连接失败，请稍后再试（请确认对话代理已在运行）。", "en": "Connection failed. Please try again (make sure the chat proxy is running)." },
+    "close":       { "zh": "关闭", "en": "Close" }
+  },
+
+  "contacts": {
+    "_说明": "联系方式图标。type=copy 点击复制，type=tel 拨号，type=mailto 发邮件。icon 可选：phone/wechat/mail/megaphone（如需新图标请告知）。value 是复制/跳转的实际内容。",
+    "items": [
+      { "type": "copy", "icon": "phone",     "value": "13208036808",       "label": { "zh": "电话",   "en": "Phone" },    "sub": { "zh": "13208036808",       "en": "13208036808" } },
+      { "type": "copy", "icon": "wechat",    "value": "Bnszm013",          "label": { "zh": "微信",   "en": "WeChat" },   "sub": { "zh": "Bnszm013",          "en": "Bnszm013" } },
+      { "type": "copy", "icon": "mail",      "value": "bnszm013@gmail.com", "label": { "zh": "邮箱",   "en": "Email" },    "sub": { "zh": "bnszm013@gmail.com", "en": "bnszm013@gmail.com" } },
+      { "type": "copy", "icon": "megaphone", "value": "PerryW.Yuan",        "label": { "zh": "公众号", "en": "Official" }, "sub": { "zh": "PerryW.Yuan",        "en": "PerryW.Yuan" } }
+    ]
+  },
+
+  "products": {
+    "_说明": "主要项目胶囊。pdf 字段填则点击在新标签打开该 PDF（放在 public/pdf/ 下，路径以 / 开头）。action=\"chat\" 则点击打开对话框并自动发送 chatMessage。open=true 为「幽灵玻璃」开放式样式。按数组顺序展示。",
+    "items": [
+      { "title": { "zh": "海外大模型中转", "en": "Overseas LLM Relay" },
+        "sub":   { "zh": "GPT / Claude / Gemini 直连，稳定合规", "en": "GPT / Claude / Gemini — stable & compliant" },
+        "pdf": "/pdf/apihub-overseas-llm-relay.pdf" },
+      { "title": { "zh": "FastGPT 商业版", "en": "FastGPT Commercial" },
+        "sub":   { "zh": "企业级 RAG 知识库 / 高级工作流编排，不止于企业智能客服", "en": "Enterprise RAG & advanced workflow orchestration — beyond smart customer service" },
+        "pdf": "/pdf/fastgpt-commercial.pdf" },
+      { "title": { "zh": "Microsoft 365 Business", "en": "Microsoft 365 Business" },
+        "sub":   { "zh": "365 中国大陆版 / 国际版", "en": "Mainland China & international editions" },
+        "pdf": "/pdf/microsoft365-copilot.pdf" },
+      { "open": true, "action": "chat",
+        "chatMessage": { "zh": "随便聊聊，交个朋友", "en": "Just here to talk and make a friend" },
+        "title": { "zh": "AI 定制解决方案", "en": "Custom AI Solutions" },
+        "sub":   { "zh": "敬请期待 / 交个朋友 / 和我聊聊~", "en": "Stay tuned / Make a friend / Let's chat~" } }
+    ]
+  },
+
+  "chips": {
+    "_说明": "对话框里的「推荐问题」快捷按钮，点击即发送。",
+    "items": [
+      { "zh": "海外大模型怎么接入？",        "en": "How do I access overseas LLMs?" },
+      { "zh": "FastGPT 商业版能做什么？",     "en": "What can FastGPT Commercial do?" },
+      { "zh": "Microsoft 365 Business 怎么买？", "en": "How to get Microsoft 365 Business?" },
+      { "zh": "我就想了解下 AI",            "en": "Just here to talk AI" }
+    ]
+  },
+
+  "desktop": {
+    "_说明": "桌面图标显示哪些应用（按数组顺序）。值为 App_Definition 的 id，由窗口管理器注册表解析。非文案字段，不参与 i18n 派生。",
+    "icons": ["main", "pdf-overseas", "pdf-fastgpt", "pdf-m365", "chat", "notepad"]
+  },
+
+  "windows": {
+    "_说明": "各窗口标题栏文案（中英双语），经 i18n 派生为 windows.* 扁平 key。",
+    "mainTitle":    { "zh": "培文的名片", "en": "Peiwen's Card" },
+    "notepadTitle": { "zh": "留言板 - 记事本", "en": "Guestbook - Notepad" },
+    "myComputer":   { "zh": "我的电脑", "en": "My Computer" },
+    "myDocuments":  { "zh": "我的文档", "en": "My Documents" },
+    "controlPanel": { "zh": "控制面板", "en": "Control Panel" },
+    "helpTitle":    { "zh": "帮助和支持", "en": "Help and Support" }
+  },
+
+  "notepad": {
+    "_说明": "留言板（记事本）窗口文案。tooLong 含占位符 {max}，由前端替换为最大字数。",
+    "nickname":    { "zh": "昵称（可选）", "en": "Nickname (optional)" },
+    "anonymous":   { "zh": "匿名访客", "en": "Anonymous" },
+    "placeholder": { "zh": "留下你的想法…", "en": "Leave your thoughts…" },
+    "submit":      { "zh": "保存", "en": "Save" },
+    "empty":       { "zh": "还没有留言，来做第一个吧～", "en": "No messages yet — be the first!" },
+    "tooLong":     { "zh": "留言过长（上限 {max} 字）", "en": "Message too long (max {max})" },
+    "loadError":   { "zh": "留言加载失败，请稍后重试", "en": "Failed to load messages, please retry" },
+    "saveError":   { "zh": "保存失败，请稍后重试", "en": "Failed to save, please retry" },
+    "rateLimited": { "zh": "操作太频繁，请稍后再试", "en": "Too many requests, slow down" }
+  },
+
+  "controlPanel": {
+    "_说明": "控制面板窗口文案（语言切换、减弱动效偏好）。",
+    "language":      { "zh": "语言", "en": "Language" },
+    "reducedMotion": { "zh": "减弱动效", "en": "Reduce motion" }
+  }
+}

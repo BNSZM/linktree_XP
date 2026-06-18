@@ -1,0 +1,21 @@
+{
+  "name": "personal-homepage",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest",
+    "test:run": "vitest --run"
+  },
+  "dependencies": {
+    "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "fast-check": "4.8.0",
+    "happy-dom": "20.10.5",
+    "vitest": "4.1.9"
+  }
+}

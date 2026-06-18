@@ -1,0 +1,149 @@
+/* ══════════════════════════════════════════════════════════════
+   apps/chat.css — AI 聊天窗口正文样式
+   消息流、流式光标、建议气泡、输入表单。
+   窗口框架（标题栏 / 拖动 / 关闭 / 调整尺寸）由 XPWindow 模板 +
+   WindowManager 提供，本文件仅负责聊天正文布局。
+   Split out of the former single global.css (责任聚焦，呈现不变).
+   ══════════════════════════════════════════════════════════════ */
+
+/* Chat messages — sunken white panel */
+.chat-msgs {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex; flex-direction: column; gap: 7px;
+  background: var(--luna-white);
+  border: 1px inset #ACA899;
+  margin: 5px 7px;
+  border-radius: 2px;
+}
+.msg {
+  max-width: 80%;
+  padding: 6px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(180deg, #3C8BF5 0%, #003CBF 100%);
+  color: #fff;
+  border: 1px solid rgba(0,20,100,0.35);
+  border-bottom-right-radius: 1px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.20);
+}
+.msg.bot {
+  align-self: flex-start;
+  background: linear-gradient(180deg, #F5F3EA 0%, #E8E4D6 100%);
+  color: var(--luna-text);
+  border: 1px solid #ACA899;
+  border-bottom-left-radius: 1px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+}
+
+/* Streaming caret */
+.caret {
+  display: inline-block;
+  width: 6px; height: 1.05em;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  background: var(--luna-blue-lt);
+  border-radius: 1px;
+  animation: caret-blink 1s steps(2, start) infinite;
+}
+@keyframes caret-blink {
+  0%, 50%      { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* Suggestion chips */
+.chips {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  padding: 0 7px 5px;
+}
+.chips[hidden] { display: none; }
+.chip {
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--luna-blue-lt);
+  background: linear-gradient(180deg, #F5F3EA 0%, #E8E4D6 100%);
+  border: 1px solid #ACA899;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+  transition: border-color 0.10s, background 0.10s;
+}
+.chip:hover {
+  border-color: var(--luna-blue-lt);
+  background: linear-gradient(180deg, #FEFCF5 0%, #E8E5D5 100%);
+}
+.chip:active {
+  background: linear-gradient(180deg, #D6D2C2 0%, #E2DFD1 100%);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.10);
+}
+
+/* Chat form */
+.chat-form {
+  display: flex; gap: 5px;
+  padding: 5px 7px 7px;
+  border-top: 1px solid #ACA899;
+  background: var(--luna-bg);
+}
+.chat-input {
+  flex: 1; resize: none; max-height: 120px;
+  font-family: var(--font); font-size: 11px;
+  color: var(--luna-text);
+  background: var(--luna-white);
+  border: 1px inset #ACA899;
+  border-radius: 2px;
+  padding: 5px 7px;
+  outline: none;
+}
+.chat-input:focus {
+  border-color: var(--luna-blue-lt);
+}
+.chat-go {
+  flex: none;
+  width: 30px; height: 30px;
+  align-self: flex-end;
+  display: grid; place-items: center;
+  border: 1px solid rgba(0,20,100,0.45);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #3C8BF5 0%, #003CBF 100%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: filter 0.10s;
+}
+.chat-go:hover { filter: brightness(1.12); }
+.chat-go:active { filter: brightness(0.82); box-shadow: inset 0 2px 3px rgba(0,0,0,0.25); }
+.chat-go:disabled { opacity: 0.5; cursor: default; filter: none; }
+.chat-go svg { width: 13px; height: 13px; }
+
+/* ══════════════════════════════════════════════════════════════
+   Windowed chat — chat as window body content (task 14.1).
+   The window frame (XPWindow + WindowManager) provides the Luna title
+   bar, drag/focus/close/resize. This block lays out the chat body
+   (message stream + chips + input form) to fill the window body and keep
+   the message stream as the only scrolling region.
+   ══════════════════════════════════════════════════════════════ */
+.xp-win-body.chat-win-body {
+  /* Body itself should not scroll; the message stream scrolls instead. */
+  overflow: hidden;
+  display: flex;
+}
+.chat-win {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--luna-bg);
+}
+/* Message stream flexes to fill remaining height and scrolls internally. */
+.chat-win .chat-msgs {
+  flex: 1;
+  min-height: 0;
+}

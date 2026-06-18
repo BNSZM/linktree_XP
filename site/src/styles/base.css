@@ -1,0 +1,160 @@
+/* ══════════════════════════════════════════════════════════════
+   base.css — Windows XP "Luna" foundation
+   Design tokens (CSS variables), CSS reset, base typography,
+   custom scrollbar, and reduced-motion accessibility.
+   Split out of the former single global.css (责任聚焦，呈现不变).
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Luna Blue — title bar gradient endpoints */
+  --luna-blue-lt:  #0A60D4;
+  --luna-blue-dk:  #003CBF;
+
+  /* Container / surface */
+  --luna-bg:       #ECE9D8;
+  --luna-bg-deep:  #D6D2C2;
+  --luna-white:    #FFFFFF;
+
+  /* Emboss borders */
+  --luna-bdr-hi:   #FFFFFF;
+  --luna-bdr-mid:  #ACA899;
+  --luna-bdr-dk:   #919B9C;
+  --luna-bdr-shadow: #716F64;
+
+  /* Text */
+  --luna-text:     #000000;
+  --luna-text-mut: #444444;
+  --luna-disabled: #A0A0A0;
+
+  /* Accent green */
+  --luna-green:    #73B973;
+  --luna-green-dk: #3C8C3C;
+
+  /* Window shadow */
+  --luna-shadow:   rgba(0,0,0,0.35);
+
+  /* Font */
+  --font: Tahoma, Verdana, "Segoe UI", Geneva, sans-serif;
+
+  /* Compatibility — keep --accent / --accent-2 for existing JS */
+  --accent: #0A60D4;
+  --accent-2: #003CBF;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 11px; }
+
+body {
+  font-family: var(--font);
+  color: var(--luna-text);
+  line-height: 1.35;
+  -webkit-font-smoothing: auto;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 16px; }
+::-webkit-scrollbar-track {
+  background: #F1EFE4;
+  border-left: 1px solid #ACA899;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #D6D2C2, #C8C4B4);
+  border: 1px solid #ACA899;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #C8C4B4, #B8B4A4);
+}
+::-webkit-scrollbar-button {
+  height: 16px;
+  background: var(--luna-bg);
+  border: 1px solid #ACA899;
+}
+
+/* ── Accessibility: Reduced Motion (Req 16.1) ──
+   抑制/最小化所有非必要的窗口与界面动画。这是一条全局规则，
+   以 !important 覆盖各拆分样式表与作用域组件（XPWindow/XPTaskbar）
+   中的 transition/animation；仅作用于"动效"，不改变任何颜色、渐变、
+   边框或布局，从而保持 XP Luna 视觉一致性。
+   采用 0.01ms 极短时长（而非 none）以保留动画的最终静止状态，
+   避免依赖关键帧终态的元素出现视觉异常。 */
+@media (prefers-reduced-motion: reduce) {
+  /* 全局兜底：将任何 transition/animation 收敛为近乎瞬时（保留终态，避免视觉异常）。
+     覆盖窗口框架（.xp-window）、标题栏与控制按钮（.xp-titlebar / .xp-win-btn）、
+     标签条（.xp-tab）、底部按钮（.xp-btn）、任务栏按钮、语言切换、Toast 等。 */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    animation-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* 窗口管理器：显式抑制窗口的打开/聚焦/最大化等几何或外观过渡，
+     使窗口状态切换即时完成、无动画。窗口位置/尺寸由脚本直接设置，
+     这里确保任何 transition 都不会对窗口框架与状态切换产生动效。 */
+  .xp-window,
+  .xp-window.is-active,
+  .xp-window.is-maximized,
+  .xp-titlebar,
+  .xp-win-btn,
+  .xp-tab {
+    transition: none !important;
+  }
+
+  /* 装饰性的持续动画（在线状态脉冲、聊天流式光标闪烁、聊天入口呼吸）属于非必要动效，
+     在减弱动效偏好下完全停止并定格在稳定的静止态。 */
+  .dot,
+  .caret,
+  .chat-entry {
+    animation: none !important;
+  }
+  .caret {
+    opacity: 1 !important; /* 保持光标可见，而非定格在闪烁的隐藏帧 */
+  }
+
+  /* Toast：去除滑入位移与淡入过渡，显示/隐藏即时切换，避免非必要运动。 */
+  .toast {
+    transition: none !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   显式「减弱动效」开关（控制面板 Decorative_Window，Req 12.5/16.1）。
+   操作系统的 prefers-reduced-motion 由上面的媒体查询处理；此处提供一个用户可
+   在控制面板内手动开启的等价偏好：在 <html> 上加 .force-reduced-motion 类即
+   复用同一套「将动效收敛为近乎瞬时」的抑制规则，且仅作用于动效、不改变任何
+   颜色/边框/布局，保持 XP Luna 视觉一致。
+   ────────────────────────────────────────────────────────────── */
+html.force-reduced-motion *,
+html.force-reduced-motion *::before,
+html.force-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+  animation-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+html.force-reduced-motion .xp-window,
+html.force-reduced-motion .xp-window.is-active,
+html.force-reduced-motion .xp-window.is-maximized,
+html.force-reduced-motion .xp-titlebar,
+html.force-reduced-motion .xp-win-btn,
+html.force-reduced-motion .xp-tab,
+html.force-reduced-motion .toast {
+  transition: none !important;
+}
+html.force-reduced-motion .dot,
+html.force-reduced-motion .caret,
+html.force-reduced-motion .chat-entry {
+  animation: none !important;
+}
+html.force-reduced-motion .caret {
+  opacity: 1 !important;
+}

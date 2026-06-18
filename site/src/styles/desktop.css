@@ -1,0 +1,77 @@
+/* ══════════════════════════════════════════════════════════════
+   desktop.css — XP 桌面外壳（始终存在层）
+   页面布局（壁纸之上、任务栏之下的窗口区域）、语言切换、Toast。
+   Split out of the former single global.css (责任聚焦，呈现不变).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════
+   Page layout — XP Desktop (fills viewport above taskbar)
+   WindowManager 挂载容器：窗口在此容器内绝对定位。
+   ═══════════════════════════════════════════════════ */
+.xp-desktop {
+  position: fixed;
+  inset: 0;
+  bottom: 30px; /* leave room for taskbar */
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════
+   Language Toggle — shared button chrome
+   Desktop: embedded in tray via .lang-toggle--tray (XPTaskbar.astro scoped)
+   Mobile:  floating top-right via .lang-toggle--mobile (below)
+   ═══════════════════════════════════════════════════ */
+.lang-toggle {
+  width: auto; min-width: 34px; height: 24px;
+  padding: 0 8px;
+  border-radius: 3px;
+  border: 1px solid #ACA899;
+  background: linear-gradient(180deg, #F5F3EA 0%, #E2DFD1 48%, #D6D2C2 100%);
+  color: var(--luna-text);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 1px 2px rgba(0,0,0,0.10);
+  transition: background 0.10s, border-color 0.10s;
+}
+.lang-toggle:hover {
+  background: linear-gradient(180deg, #FEFCF5 0%, #E8E5D5 48%, #DDD9C8 100%);
+  border-color: var(--luna-blue-lt);
+}
+.lang-toggle:active {
+  background: linear-gradient(180deg, #D6D2C2 0%, #E2DFD1 100%);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.10);
+}
+
+/* ── Mobile-only floating variant (hidden on desktop) ── */
+.lang-toggle--mobile {
+  display: none; /* hidden on desktop; shown via responsive.css @media */
+}
+
+/* ═══════════════════════════════════════════════════
+   Toast — classic XP tooltip bubble
+   ═══════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 20px;
+  transform: translateX(-50%) translateY(14px);
+  background: #FFFFE1;
+  color: var(--luna-text);
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 4px 12px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.20);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 200;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

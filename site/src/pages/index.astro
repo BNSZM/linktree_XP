@@ -1,0 +1,117 @@
+---
+// 样式拆分为职责聚焦的多个样式表，由入口按级联顺序统一引入（呈现不变）
+import "../styles/base.css";
+import "../styles/desktop.css";
+import "../styles/window.css";
+import "../styles/apps/main-card.css";
+import "../styles/apps/chat.css";
+import "../styles/responsive.css";
+import PixelBliss from "../components/PixelBliss.astro";
+import DesktopIcons from "../components/DesktopIcons.astro";
+import XPTaskbar from "../components/XPTaskbar.astro";
+import XPWindow from "../components/XPWindow.astro";
+import { DEFAULT_LANG, t } from "../i18n/strings.js";
+const ss = DEFAULT_LANG;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={t(ss, "meta.desc")} />
+    <title set:html={t(ss, "meta.title")}></title>
+  </head>
+  <body>
+    <!-- ══ 像素风 Bliss 桌面背景（canvas 渲染） ══ -->
+    <PixelBliss />
+
+    <!-- ══ 桌面容器 —— WindowManager 驱动的窗口挂载区域（壁纸之上、任务栏之下） ══ -->
+    <!-- 桌面图标在容器内部，z-index 低于窗口，保证窗口遮挡图标 -->
+    <div id="xp-desktop" class="xp-desktop">
+      <DesktopIcons />
+    </div>
+
+    <!-- 语言切换（仅移动端浮动按钮，桌面端由 XPTaskbar 托盘承载） -->
+    <button id="lang-toggle-m" class="lang-toggle lang-toggle--mobile" type="button" aria-label={t(ss, "lang.label")}>
+      <span data-i18n="lang.next">{t(ss, "lang.next")}</span>
+    </button>
+
+    <!-- Toast 提示（XP 工具提示风格） -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- ══ XP 任务栏（桌面端显示，移动端隐藏） ══ -->
+    <XPTaskbar />
+
+    <!-- ══ 可复用 XP 窗口模板（隐藏 <template>，供 WindowManager 运行时克隆） ══ -->
+    <XPWindow />
+
+    <script>
+      // ══ 桌面初始化接线（任务 24.1） ══
+      import { initI18n, S, toast, getCurrentLang } from "../scripts/i18n.js";
+      import { initCopy } from "../scripts/copy.js";
+      import { initDesktopIcons } from "../scripts/desktop-icons.js";
+      import { createWindowManager } from "../scripts/wm/window-manager.js";
+      import { APP_REGISTRY } from "../scripts/wm/registry.js";
+
+      // 导入全部内容渲染器——加载时经 registerRenderer(kind, fn) 自注册（Req 18.4）。
+      import "../scripts/wm/renderers/main-card.js";
+      import "../scripts/wm/renderers/chat.js";
+      import "../scripts/wm/renderers/pdf-iframe.js";
+      import "../scripts/wm/renderers/decorative.js";
+      import "../scripts/wm/renderers/notepad.js";
+
+      // ── 子系统初始化 ──
+      initI18n();
+      initCopy({ S, toast });
+
+      // ── 移动端判定（视口 ≤768px，Req 14） ──
+      const isMobile = () =>
+        typeof window !== "undefined" && window.innerWidth <= 768;
+
+      // ── 移动端降级（任务 23.1）：拦截 openOrFocus ──
+      //   · PDF 类窗口 → window.open 新标签页（Req 14.4）
+      //   · 装饰窗口   → 不可用，不打开（Req 14.6）
+      //   · 其余窗口   → 正常 WindowManager 流程（拖动/调整尺寸/最大化
+      //                   由 WM 内部 isMobile() 守卫禁用）
+      function mobileOpenOrFocus(wmInst, origFn, appId, opts) {
+        if (!isMobile()) return origFn.call(wmInst, appId, opts);
+        const appDef = wmInst.getAppDefinition(appId);
+        if (!appDef) return origFn.call(wmInst, appId, opts);
+        const mb = appDef.mobile && appDef.mobile.behavior;
+        if (mb === "newtab" && appDef.content && appDef.content.pdfUrl) {
+          window.open(appDef.content.pdfUrl, "_blank", "noopener");
+          return null;
+        }
+        if (mb === "unavailable") return null;
+        return origFn.call(wmInst, appId, opts);
+      }
+
+      // ── 创建 WindowManager 实例（任务 24.1） ──
+      const desktopEl = document.getElementById("xp-desktop");
+      const taskbarEl = document.getElementById("xpTasks");
+      const wm = createWindowManager({
+        desktopEl,
+        taskbarEl,
+        registry: APP_REGISTRY,
+        isMobile,
+        i18n: { S, getCurrentLang },
+      });
+
+      // 将移动端感知的 openOrFocus 包装到实例上——桌面图标（desktop-icons.js）
+      // 与开始菜单（XPTaskbar.astro）均通过 wm.openOrFocus 调用，自动获得降级行为。
+      const _origOpenOrFocus = wm.openOrFocus.bind(wm);
+      wm.openOrFocus = (appId, opts) => mobileOpenOrFocus(wm, _origOpenOrFocus, appId, opts);
+
+      // 暴露到全局作用域——桌面图标、开始菜单、主窗口操作通过 window.__wm 调用（Req 18.5）。
+      window.__wm = wm;
+
+      // 初始化：绑定全局事件，桌面端自动打开主窗口（Req 8.1）；
+      // 移动端不自动打开（由用户经桌面图标或开始菜单触发）。
+      wm.init();
+
+      // ── 桌面图标接线（双击打开 / 单击选中 / 键盘 Enter·Space 触发）──
+      initDesktopIcons(wm);
+    </script>
+  </body>
+</html>

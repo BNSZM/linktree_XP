@@ -1,0 +1,132 @@
+---
+// ════════════════════════════════════════════════════════════
+// DesktopIcons —— 数据驱动的桌面图标（Req 21.1/21.2/21.3/21.5/16.6）
+//
+// 从注册表的 DESKTOP_ICON_APPS 渲染桌面图标，按 content.json 的
+// desktop.icons 顺序排列（主窗口、三个 PDF、聊天、记事本）。
+//
+// 图标使用 data-i18n 属性实现双语，由 i18n 模块的 apply() 在语言切换时
+// 自动更新文案（Req 15.5/18.3）。
+//
+// 单击选中（高亮），双击打开窗口（Req 21.3）。
+// 键盘可聚焦，Enter/Space 触发打开（Req 16.6）。
+// ════════════════════════════════════════════════════════════
+import { DESKTOP_ICON_APPS } from "../scripts/wm/registry.js";
+import { DEFAULT_LANG, t } from "../i18n/strings.js";
+
+const ss = DEFAULT_LANG;
+---
+
+<div class="desktop-icons" role="group" aria-label="Desktop icons">
+  {DESKTOP_ICON_APPS.map((app) => (
+    <button
+      class="desktop-icon"
+      type="button"
+      data-app-id={app.id}
+      aria-label={t(ss, app.titleKey)}
+    >
+      <span class="desktop-icon__emoji" aria-hidden="true">{app.icon}</span>
+      <span class="desktop-icon__label" data-i18n={app.titleKey}>{t(ss, app.titleKey)}</span>
+    </button>
+  ))}
+
+  <!-- 壁纸切换图标（非窗口，单击即切换到下一张壁纸） -->
+  <button
+    class="desktop-icon"
+    type="button"
+    data-action="next-wallpaper"
+    aria-label="下一张壁纸"
+  >
+    <span class="desktop-icon__emoji" aria-hidden="true">🖼️</span>
+    <span class="desktop-icon__label">下一张壁纸</span>
+  </button>
+</div>
+
+<style>
+  /* ═══════════════════════════════════════════════════
+     Desktop Icons — XP 风格，图标在上、文字在下
+     列式布局：图标从上到下排列，满一列后换到下一列
+     （Req 21.1/21.2/21.5）
+     ═══════════════════════════════════════════════════ */
+  .desktop-icons {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1; /* 低于窗口 z-index（窗口从 100 起步），窗口遮挡图标 */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 4px;
+    max-height: calc(100% - 24px); /* 不超出桌面容器 */
+  }
+
+  /* ── 单个桌面图标 ── */
+  .desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 76px;
+    padding: 4px 2px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font, Tahoma, Verdana, sans-serif);
+    transition: background 0.08s, border-color 0.08s;
+  }
+
+  .desktop-icon:hover {
+    background: rgba(11, 97, 255, 0.12);
+    border-color: rgba(11, 97, 255, 0.25);
+  }
+
+  /* 选中态：XP 蓝色高亮（Req 21.3） */
+  .desktop-icon--selected {
+    background: rgba(11, 97, 255, 0.28);
+    border-color: rgba(11, 97, 255, 0.55);
+  }
+
+  .desktop-icon:focus-visible {
+    outline: 1px dotted #fff;
+    outline-offset: 1px;
+    background: rgba(11, 97, 255, 0.18);
+    border-color: rgba(11, 97, 255, 0.35);
+  }
+
+  /* ── 图标（emoji） ── */
+  .desktop-icon__emoji {
+    font-size: 32px;
+    line-height: 1;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.35));
+  }
+
+  /* ── 标签文字 —— 带 text-shadow 保证壁纸上的可读性（Req 21.2） ── */
+  .desktop-icon__label {
+    font-size: 11px;
+    color: #fff;
+    text-align: center;
+    text-shadow:
+      1px 1px 2px rgba(0, 0, 0, 0.85),
+      0 0 4px rgba(0, 0, 0, 0.50);
+    line-height: 1.2;
+    max-width: 72px;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── 减弱动效（Req 16.1） ── */
+  @media (prefers-reduced-motion: reduce) {
+    .desktop-icon { transition: none; }
+  }
+
+  /* ── 移动端隐藏（≤768px，Req 14） ── */
+  @media (max-width: 768px) {
+    .desktop-icons { display: none !important; }
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+// Pixel-art 壁纸轮换背景 —— 默认 Bliss 像素壁纸，支持多张轮换
+// 壁纸列表由 JS 数组管理，点击桌面"下一张壁纸"图标即可轮换
+---
+
+<div class="pixel-bliss" id="pixelBliss"></div>
+
+<style>
+  .pixel-bliss {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    /* 即时 CSS 渐变回退 —— 图片加载前显示 */
+    background:
+      linear-gradient(180deg,
+        #194090 0%, #2658A8 12%, #3770C0 26%,
+        #5090D8 40%, #70B0E4 48%, #94C8F0 50%,
+        #96D454 52%, #78C23C 56%, #62B230 62%,
+        #4E9A28 72%, #3A8020 82%, #2D6818 92%, #245214 100%
+      );
+    /* 默认壁纸 */
+    background-image: url('/images/wp-1-bliss.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* 保持像素画锐利，缩放时不模糊 */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    /* 切换时的淡入过渡 */
+    transition: opacity 0.3s ease;
+  }
+</style>

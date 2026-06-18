@@ -1,0 +1,372 @@
+/* ══════════════════════════════════════════════════════════════
+   apps/main-card.css — 主名片（培文的名片）内容样式
+   身份区（头像/姓名/标语）、AI 聊天入口按钮、产品胶囊、联系方式、页脚。
+   Split out of the former single global.css (责任聚焦，呈现不变).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════
+   Identity Section
+   ═══════════════════════════════════════════════════ */
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 2px;
+}
+.avatar {
+  width: 52px; height: 52px;
+  border-radius: 4px;
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, #2878E0 0%, #003CBF 100%);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  user-select: none;
+  border: 2px solid #716F64;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.30),
+    0 2px 4px rgba(0,0,0,0.15);
+  transition: transform 0.12s;
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.avatar:hover { transform: scale(1.06); }
+
+.name {
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--luna-text);
+}
+.tagline {
+  margin-top: 2px;
+  color: var(--luna-text-mut);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════
+   AI Chat Entry Button — polished XP-style chat prompt
+   ═══════════════════════════════════════════════════ */
+.ai-frame {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.chat-entry {
+  position: relative; z-index: 1;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-family: var(--font);
+  background: linear-gradient(180deg, #EDF4FC 0%, #DDE8F6 50%, #CEDDF0 100%);
+  border: 1px solid #8BAED4;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.75),
+    0 2px 6px rgba(0,60,180,0.10);
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+  /* 呼吸特效：柔和的边框 + 阴影脉动 */
+  animation: chatBreathe 3.5s infinite ease-in-out;
+}
+@keyframes chatBreathe {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.75),
+      0 2px 6px rgba(0,60,180,0.10);
+    border-color: #8BAED4;
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.75),
+      0 2px 10px rgba(0,60,180,0.18),
+      0 0 0 2px rgba(60,139,245,0.08);
+    border-color: #6FA0D6;
+  }
+}
+.chat-entry:hover {
+  background: linear-gradient(180deg, #F4F8FE 0%, #E6F0FC 50%, #D8E8F8 100%);
+  border-color: var(--luna-blue-lt);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    0 3px 10px rgba(0,60,180,0.15);
+  animation: none;
+}
+.chat-entry:active {
+  background: linear-gradient(180deg, #CEDDF0 0%, #DDE8F6 100%);
+  box-shadow: inset 0 2px 4px rgba(0,60,180,0.12);
+  animation: none;
+}
+
+/* 中间内容：在线状态 + 分隔 + 提示语 并排一行 */
+.ce-mid {
+  flex: 1; min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ce-eyebrow {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #2E7D32;
+  white-space: nowrap;
+}
+.ce-sep {
+  color: #B0BEC5;
+  font-size: 13px;
+  user-select: none;
+}
+.ce-text {
+  font-size: 13px;
+  color: var(--luna-text);
+  line-height: 1.4;
+}
+
+/* Send button — round XP blue */
+.ce-send {
+  flex: none;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A93DE 0%, #1565C0 100%);
+  color: #fff;
+  border: 1px solid rgba(0,20,100,0.30);
+  box-shadow:
+    0 2px 6px rgba(0,60,180,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.30);
+  transition: transform 0.10s, filter 0.10s;
+}
+.ce-send:hover { filter: brightness(1.12); transform: scale(1.08); }
+.ce-send svg { width: 14px; height: 14px; }
+
+/* Online dot */
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  box-shadow: 0 0 0 0 rgba(76,175,80,0.50);
+  animation: pulse 2.2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+/* Chat cue icon — right side */
+.ce-cue {
+  flex: none;
+  display: grid; place-items: center;
+  color: var(--luna-blue-lt);
+  opacity: 0.45;
+  transition: opacity 0.12s;
+}
+.ce-cue svg { width: 16px; height: 16px; }
+.chat-entry:hover .ce-cue { opacity: 0.85; }
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(76,175,80,0.50); }
+  65%  { box-shadow: 0 0 0 4px rgba(76,175,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); }
+}
+
+/* ═══════════════════════════════════════════════════
+   Product Pills — XP list items
+   ═══════════════════════════════════════════════════ */
+.pills { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.pill {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 34px 9px 12px;
+  border-radius: 3px;
+  cursor: default;
+  font-family: var(--font);
+  background: linear-gradient(180deg, #F5F3EA 0%, #E2DFD1 48%, #D6D2C2 100%);
+  border: 1px solid #ACA899;
+  color: var(--luna-text);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 1px 1px rgba(0,0,0,0.04);
+  text-align: center;
+  transition: background 0.10s, border-color 0.10s;
+}
+.pill:hover {
+  background: linear-gradient(180deg, #FEFCF5 0%, #E8E5D5 48%, #DDD9C8 100%);
+  border-color: var(--luna-blue-lt);
+}
+.pill-tx { display: flex; flex-direction: column; align-items: center; line-height: 1.3; }
+.pill-title { font-size: 12px; font-weight: 700; }
+.pill-sub { font-size: 10px; color: var(--luna-text-mut); margin-top: 1px; }
+
+.pill-cue {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  display: grid; place-items: center;
+  opacity: 0.45;
+  transition: opacity 0.12s;
+  color: var(--luna-blue-lt);
+}
+.pill-cue svg { width: 13px; height: 13px; }
+.pill:hover .pill-cue { opacity: 1; }
+
+/* Open/ghost pill */
+.pill-open {
+  background: transparent;
+  border-style: dashed;
+  border-color: #ACA899;
+  box-shadow: none;
+}
+.pill-open:hover {
+  background: rgba(10,96,212,0.04);
+  border-style: solid;
+  border-color: var(--luna-blue-lt);
+}
+.pill-open .pill-title { color: var(--luna-blue-lt); }
+.pill-open .pill-sub { color: var(--luna-text-mut); }
+
+/* ═══════════════════════════════════════════════════
+   Contact Section
+   ═══════════════════════════════════════════════════ */
+.contact-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.contact-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 6px;
+}
+
+/* XP raised icon button */
+.sbtn {
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #F5F3EA 0%, #E2DFD1 48%, #D6D2C2 100%);
+  color: var(--luna-blue-lt);
+  border: 1px solid #ACA899;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 1px 1px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: background 0.10s, border-color 0.10s;
+}
+.sbtn:hover {
+  background: linear-gradient(180deg, #FEFCF5 0%, #E8E5D5 48%, #DDD9C8 100%);
+  border-color: var(--luna-blue-lt);
+}
+.sbtn:active {
+  background: linear-gradient(180deg, #D6D2C2 0%, #E2DFD1 100%);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.10);
+}
+.sbtn svg { width: 17px; height: 17px; filter: none; }
+
+/* Footer */
+.foot {
+  margin-top: auto; /* push to bottom when space allows */
+  font-size: 10px;
+  color: var(--luna-text-mut);
+  text-align: center;
+  padding-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════
+   main-card 渲染器（运行时窗口正文）专属布局
+   —— 任务 13.1：系统属性风格的「左图右信息」身份布局（Req 8.6）
+   与装饰性「?」帮助按钮。内容元素（.avatar/.name/.tagline/
+   .chat-entry/.pill/.sbtn 等）沿用上方既有样式，呈现一致。
+   ═══════════════════════════════════════════════════ */
+
+/* 主名片正文铺满窗口，flex 纵向让组框填满空间 */
+.mc-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.mc-body .xp-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+/* 组框在弹性布局下可增长，填满可用空间 */
+.mc-body .xp-group {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.mc-body .xp-group:last-of-type {
+  margin-bottom: 4px;
+}
+
+/* 左图右信息：覆盖 .identity 的纵向居中，改为头像在左、信息在右 */
+.mc-identity {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 0;
+}
+.mc-id-left {
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.mc-id-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+/* 右栏文字左对齐（与「右信息」布局更贴合，姓名/标语沿用字号字色） */
+.mc-id-right .name,
+.mc-id-right .tagline {
+  text-align: left;
+  margin-top: 0;
+}
+.mc-id-right .tagline { margin-top: 2px; }
+
+/* 装饰性「?」帮助按钮：贴近 XP 标题栏右侧的帮助控件外观，纯装饰无动作 */
+.mc-tabs {
+  position: relative;
+  align-items: center;
+}
+.mc-help {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  cursor: default;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--luna-text);
+  background: linear-gradient(180deg, #F5F3EA 0%, #E2DFD1 48%, #D6D2C2 100%);
+  border: 1px solid #ACA899;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 1px rgba(0, 0, 0, 0.06);
+}

@@ -1,0 +1,210 @@
+---
+// Reusable XP Window template (Phase 6).
+//
+// This component does NOT render a live window. It outputs a single hidden
+// <template id="xp-window-template"> describing the standard XP window
+// skeleton. At runtime the WindowManager clones `template.content`, fills in
+// the title / icon, decides whether the maximize button and the 8 resize
+// handles are kept (per App_Definition), then a content renderer injects the
+// body. See design.md → "Components and Interfaces → 通用 XP 窗口 DOM".
+//
+// Structure (design示意):
+//   .xp-win[role=dialog]
+//     .xp-win-titlebar  → icon + title + controls (min / max? / close)
+//     .xp-win-body      → content slot (renderer injects here)
+//     .xp-rz x8         → resize handles n/s/e/w/ne/nw/se/sw (optional)
+---
+
+<template id="xp-window-template">
+  <div class="xp-win" role="dialog" aria-modal="false" aria-label="" tabindex="-1">
+    <!-- Title bar: icon + title + window controls -->
+    <div class="xp-win-titlebar">
+      <span class="xp-win-icon" aria-hidden="true"></span>
+      <span class="xp-win-title"></span>
+      <div class="xp-win-controls">
+        <button
+          type="button"
+          class="xp-win-btn xp-win-btn--min xp-win-min"
+          aria-label="最小化"
+          title="最小化"
+        ></button>
+        <button
+          type="button"
+          class="xp-win-btn xp-win-btn--max xp-win-max"
+          aria-label="最大化"
+          title="最大化"
+        ></button>
+        <button
+          type="button"
+          class="xp-win-btn xp-win-btn--close xp-win-close"
+          aria-label="关闭"
+          title="关闭"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Body: content renderer injects window content here -->
+    <div class="xp-win-body"></div>
+
+    <!-- Resize handles: 4 edges + 4 corners (optional, removed for fixed windows) -->
+    <span class="xp-rz xp-rz-n"  aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-s"  aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-e"  aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-w"  aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-ne" aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-nw" aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-se" aria-hidden="true"></span>
+    <span class="xp-rz xp-rz-sw" aria-hidden="true"></span>
+  </div>
+</template>
+
+<style is:global>
+  /* ═══════════════════════════════════════════════════
+     Reusable XP Window — frame + title bar + resize handles
+     (styles must be global so cloned template nodes match)
+     ═══════════════════════════════════════════════════ */
+  .xp-win {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    min-height: 120px;
+    background: var(--luna-bg, #ECE9D8);
+    border: 1px solid #0054E3;
+    border-radius: 8px 8px 3px 3px;
+    box-shadow:
+      1px 1px 0 rgba(0, 0, 0, 0.12),
+      3px 3px 0 rgba(0, 0, 0, 0.06),
+      6px 6px 20px var(--luna-shadow, rgba(0, 0, 0, 0.35)),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    font-family: var(--font, Tahoma, Verdana, sans-serif);
+    overflow: hidden;
+  }
+
+  /* ── Title bar ── */
+  .xp-win-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 4px 0 6px;
+    flex-shrink: 0;
+    cursor: default;
+    color: #fff;
+    background: linear-gradient(180deg,
+      #0997FF 0%, #0E81F0 8%, #0860DC 40%,
+      #0850D0 88%, #0A60D4 100%
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    user-select: none;
+  }
+  /* Inactive title bar appearance (applied by WindowManager) */
+  .xp-win:not(.is-active) .xp-win-titlebar {
+    background: linear-gradient(180deg, #7BA4DE 0%, #6E96D2 50%, #6890CE 100%);
+  }
+
+  .xp-win-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .xp-win-icon:empty { display: none; }
+
+  .xp-win-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.40);
+  }
+
+  /* ── Window control buttons ── */
+  .xp-win-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .xp-win-btn {
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+    font-family: var(--font, Tahoma, Verdana, sans-serif);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30);
+    transition: filter 0.08s;
+  }
+  .xp-win-btn:hover { filter: brightness(1.15); }
+  .xp-win-btn:active {
+    filter: brightness(0.82);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+  }
+  .xp-win-btn:focus-visible {
+    outline: 1px dotted #fff;
+    outline-offset: 1px;
+  }
+  .xp-win-btn--min,
+  .xp-win-btn--max {
+    background: linear-gradient(180deg, #4193F8 0%, #1B5FCC 45%, #256AD8 100%);
+  }
+  .xp-win-btn--close {
+    background: linear-gradient(180deg, #E88B60 0%, #CC5540 45%, #D8624A 100%);
+    margin-left: 2px;
+  }
+  /* Glyphs (text-free buttons get a drawn glyph) */
+  .xp-win-btn--min::before  { content: "_"; transform: translateY(-4px); }
+  .xp-win-btn--max::before  { content: "\25A1"; } /* □ */
+  .xp-win-btn--close::before { content: "\00D7"; font-size: 14px; } /* × */
+  /* Maximize button hidden for non-maximizable windows */
+  .xp-win.no-max .xp-win-btn--max { display: none; }
+
+  /* ── Window body (content slot) ── */
+  .xp-win-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: var(--luna-bg, #ECE9D8);
+  }
+
+  /* ── Resize handles ── */
+  .xp-rz {
+    position: absolute;
+    z-index: 2;
+    background: transparent;
+    touch-action: none;
+  }
+  /* Edges */
+  .xp-rz-n { top: -3px; left: 8px; right: 8px; height: 6px; cursor: ns-resize; }
+  .xp-rz-s { bottom: -3px; left: 8px; right: 8px; height: 6px; cursor: ns-resize; }
+  .xp-rz-e { top: 8px; bottom: 8px; right: -3px; width: 6px; cursor: ew-resize; }
+  .xp-rz-w { top: 8px; bottom: 8px; left: -3px; width: 6px; cursor: ew-resize; }
+  /* Corners */
+  .xp-rz-ne { top: -3px; right: -3px; width: 12px; height: 12px; cursor: nesw-resize; }
+  .xp-rz-nw { top: -3px; left: -3px; width: 12px; height: 12px; cursor: nwse-resize; }
+  .xp-rz-se { bottom: -3px; right: -3px; width: 12px; height: 12px; cursor: nwse-resize; }
+  .xp-rz-sw { bottom: -3px; left: -3px; width: 12px; height: 12px; cursor: nesw-resize; }
+
+  /* Maximized windows lock geometry: hide handles */
+  .xp-win.is-maximized .xp-rz { display: none; }
+
+  /* Reduced motion: suppress window transitions/animations */
+  @media (prefers-reduced-motion: reduce) {
+    .xp-win,
+    .xp-win-btn { transition: none; animation: none; }
+  }
+</style>

@@ -1,0 +1,233 @@
+/* ══════════════════════════════════════════════════════════════
+   window.css — XP 窗口框架（Luna "系统属性"风格）
+   窗口边框、标题栏与控制按钮、标签条、窗口正文、组框、底部按钮行。
+   Split out of the former single global.css (责任聚焦，呈现不变).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════
+   XP Window Frame
+   ═══════════════════════════════════════════════════ */
+.xp-window {
+  background: var(--luna-bg);
+  border-radius: 8px 8px 3px 3px;
+  border: 1px solid #0054E3;
+  box-shadow:
+    1px 1px 0 rgba(0,0,0,0.12),
+    3px 3px 0 rgba(0,0,0,0.06),
+    6px 6px 20px var(--luna-shadow),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  overflow: hidden;
+}
+
+/* ── Title Bar ── Luna blue gradient + glossy sheen */
+.xp-titlebar {
+  background: linear-gradient(180deg,
+    #0997FF 0%,
+    #0673E6 6%,
+    #0058D6 16%,
+    #0050CC 32%,
+    #0048C0 52%,
+    #0050CC 72%,
+    #1A6CE0 88%,
+    #3E96F8 100%
+  );
+  padding: 4px 5px 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 7px 7px 0 0;
+  position: relative;
+  user-select: none;
+}
+/* Glossy highlight strip across top half */
+.xp-titlebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.38) 0%,
+    rgba(255,255,255,0.12) 70%,
+    transparent 100%
+  );
+  border-radius: 7px 7px 0 0;
+  pointer-events: none;
+}
+
+.xp-title-icon {
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  font-size: 10px;
+  background: linear-gradient(135deg, #68B0E8, #2060A8);
+  border-radius: 2px;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+}
+.xp-title-text {
+  flex: 1;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.50);
+  letter-spacing: 0;
+  position: relative; z-index: 1;
+}
+.xp-title-controls {
+  display: flex;
+  gap: 2px;
+  position: relative; z-index: 1;
+}
+
+/* Window control buttons */
+.xp-win-btn {
+  width: 21px; height: 21px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,30,100,0.50);
+  display: grid; place-items: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: #fff;
+  font-family: var(--font);
+  line-height: 1;
+  padding: 0;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.40),
+    0 1px 1px rgba(0,0,0,0.15);
+  transition: filter 0.08s;
+}
+.xp-win-btn:hover { filter: brightness(1.15); }
+.xp-win-btn:active { filter: brightness(0.82); box-shadow: inset 0 1px 3px rgba(0,0,0,0.35); }
+
+.xp-win-btn--min,
+.xp-win-btn--max {
+  background: linear-gradient(180deg, #4193F8 0%, #1B5FCC 45%, #256AD8 100%);
+}
+.xp-win-btn--close {
+  background: linear-gradient(180deg, #E88B60 0%, #CC5540 45%, #D8624A 100%);
+  margin-left: 2px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Tab Strip — compact, authentic XP tab row
+   ═══════════════════════════════════════════════════ */
+.xp-tabs {
+  display: flex;
+  padding: 5px 8px 0;
+  gap: 1px;
+  position: relative;
+  background: var(--luna-bg);
+  border-bottom: 1px solid #ACA899;
+}
+.xp-tab {
+  padding: 4px 14px 5px;
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--luna-text);
+  background: linear-gradient(180deg, #F0EDE2 0%, #DFDCCB 100%);
+  border: 1px solid #ACA899;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+  position: relative;
+  top: 1px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 -1px 2px rgba(0,0,0,0.03);
+  transition: background 0.10s;
+  line-height: 1.15;
+}
+.xp-tab:hover:not(.xp-tab--active) {
+  background: linear-gradient(180deg, #F8F6EE 0%, #E8E5D5 100%);
+}
+.xp-tab--active {
+  background: var(--luna-bg);
+  padding-top: 3px;
+  margin-bottom: -1px;
+  z-index: 2;
+  border-top: 2px solid #0A60D4;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.70);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════
+   Window Body
+   ═══════════════════════════════════════════════════ */
+.xp-body {
+  padding: 12px 14px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Group Box — clean XP fieldset
+   Matches the "System" / "Computer" groups in screenshot:
+   thin dark border, small bold legend on the border line.
+   ═══════════════════════════════════════════════════ */
+.xp-group {
+  border: 1px solid #ACA899;
+  border-radius: 3px;
+  padding: 14px 10px 10px;
+  margin-bottom: 10px;
+  position: relative;
+  background: var(--luna-bg);
+}
+.xp-group-legend {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background: var(--luna-bg);
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--luna-text);
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════
+   Bottom Button Row — OK / Cancel / Apply
+   Matches the bottom buttons in the XP screenshot.
+   ═══════════════════════════════════════════════════ */
+.xp-button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: 1px solid #ACA899;
+  background: var(--luna-bg);
+}
+.xp-btn {
+  min-width: 75px;
+  height: 23px;
+  padding: 0 12px;
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--luna-text);
+  background: linear-gradient(180deg, #F5F3EA 0%, #E2DFD1 48%, #D6D2C2 100%);
+  border: 1px solid #ACA899;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.60),
+    0 1px 1px rgba(0,0,0,0.05);
+  transition: background 0.10s, border-color 0.10s;
+  line-height: 23px;
+}
+.xp-btn:hover {
+  background: linear-gradient(180deg, #FEFCF5 0%, #E8E5D5 48%, #DDD9C8 100%);
+  border-color: var(--luna-blue-lt);
+}
+.xp-btn:active {
+  background: linear-gradient(180deg, #D6D2C2 0%, #E2DFD1 100%);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.10);
+}
+/* Primary button (OK) has a darker border to indicate default action */
+.xp-btn--primary {
+  border-color: #003C74;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.60),
+    0 0 0 1px rgba(0,60,116,0.25),
+    0 1px 1px rgba(0,0,0,0.06);
+}

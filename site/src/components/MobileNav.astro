@@ -1,0 +1,82 @@
+---
+// MobileNav —— 移动端底部 Tab 栏（≤768px）
+// 桌面端由 responsive.css 隐藏，不影响现有窗口管理器。
+// Tab 切换逻辑在 mobile-nav.js 中接线。
+---
+
+<nav id="mobile-tabbar" class="mobile-tabbar" aria-label="Mobile navigation">
+  <button class="mobile-tab active" data-tab="main" type="button" aria-label="名片">
+    <span class="tab-icon" aria-hidden="true">👤</span>
+    <span class="tab-label">名片</span>
+  </button>
+  <button class="mobile-tab" data-tab="chat" type="button" aria-label="AI助手">
+    <span class="tab-icon" aria-hidden="true">💬</span>
+    <span class="tab-label">AI助手</span>
+  </button>
+  <button class="mobile-tab" data-tab="more" type="button" aria-label="更多">
+    <span class="tab-icon" aria-hidden="true">☰</span>
+    <span class="tab-label">更多</span>
+  </button>
+</nav>
+
+<style>
+  /* ── Tab 栏：固定底部，仅移动端可见 ── */
+  .mobile-tabbar {
+    display: none; /* 桌面端隐藏 */
+  }
+
+  @media (max-width: 768px) {
+    .mobile-tabbar {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+      background: linear-gradient(180deg, #3C6EB4 0%, #2458A0 100%);
+      border-top: 2px solid #5B9BD5;
+      box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.25);
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .mobile-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      flex: 1;
+      height: 100%;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.55);
+      cursor: pointer;
+      font-family: var(--font, Tahoma, sans-serif);
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.12s, background 0.12s;
+    }
+
+    .mobile-tab:active {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-tab.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .tab-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .tab-label {
+      font-size: 10px;
+      line-height: 1.2;
+      font-weight: 600;
+    }
+  }
+</style>

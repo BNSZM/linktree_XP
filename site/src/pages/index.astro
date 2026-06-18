@@ -10,6 +10,7 @@ import PixelBliss from "../components/PixelBliss.astro";
 import DesktopIcons from "../components/DesktopIcons.astro";
 import XPTaskbar from "../components/XPTaskbar.astro";
 import XPWindow from "../components/XPWindow.astro";
+import MobileNav from "../components/MobileNav.astro";
 import { DEFAULT_LANG, t } from "../i18n/strings.js";
 const ss = DEFAULT_LANG;
 ---
@@ -43,6 +44,9 @@ const ss = DEFAULT_LANG;
     <!-- ══ XP 任务栏（桌面端显示，移动端隐藏） ══ -->
     <XPTaskbar />
 
+    <!-- ══ 移动端底部 Tab 栏（桌面端隐藏） ══ -->
+    <MobileNav />
+
     <!-- ══ 可复用 XP 窗口模板（隐藏 <template>，供 WindowManager 运行时克隆） ══ -->
     <XPWindow />
 
@@ -51,6 +55,7 @@ const ss = DEFAULT_LANG;
       import { initI18n, S, toast, getCurrentLang } from "../scripts/i18n.js";
       import { initCopy } from "../scripts/copy.js";
       import { initDesktopIcons } from "../scripts/desktop-icons.js";
+      import { initMobileNav } from "../scripts/mobile-nav.js";
       import { createWindowManager } from "../scripts/wm/window-manager.js";
       import { APP_REGISTRY } from "../scripts/wm/registry.js";
 
@@ -106,12 +111,16 @@ const ss = DEFAULT_LANG;
       // 暴露到全局作用域——桌面图标、开始菜单、主窗口操作通过 window.__wm 调用（Req 18.5）。
       window.__wm = wm;
 
-      // 初始化：绑定全局事件，桌面端自动打开主窗口（Req 8.1）；
-      // 移动端不自动打开（由用户经桌面图标或开始菜单触发）。
+      // 初始化：绑定全局事件，自动打开主窗口。
       wm.init();
 
       // ── 桌面图标接线（双击打开 / 单击选中 / 键盘 Enter·Space 触发）──
       initDesktopIcons(wm);
+
+      // ── 移动端 Tab 导航（底部切换名片/AI助手/更多）──
+      if (isMobile()) {
+        initMobileNav(wm);
+      }
     </script>
   </body>
 </html>

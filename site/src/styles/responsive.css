@@ -1,42 +1,137 @@
 /* ══════════════════════════════════════════════════════════════
    responsive.css — 移动端布局降级（≤768px）
-   WindowManager 驱动的窗口在移动端的表现：
-     · 桌面容器填满视口（任务栏由自身 @media 隐藏）
-     · 窗口无边框/圆角/阴影，填满屏幕（Req 14.1/14.2）
-     · Chat/Notepad 等对话框窗口大号居中（由窗口自身 minSize 约束，Req 14.3/14.5）
-     · PDF 入口走 window.open 新标签页（由初始化脚本拦截，Req 14.4）
-     · 装饰窗口不可用（由初始化脚本拦截，Req 14.6）
-     · 拖动/调整尺寸/最大化由 WM 内部 isMobile() 守卫禁用（Req 2.5/19.7/22.6）
-     · 语言切换右上角与 Toast 底部中央保持可见（Req 14.7/14.8）
+
+   移动端采用底部 Tab 栏导航（名片 / AI助手 / 更多）：
+     · 窗口填满屏幕（减去 Tab 栏高度），无标题栏
+     · Tab 栏固定底部 56px，z-index 最高
+     · 键盘弹出时用 100svh 防止页面被顶起
+     · PDF 走 window.open 新标签页
+     · 装饰窗口在"更多"面板中不显示
+
    跨切面的移动端覆盖，须在所有基础规则之后引入以保持级联顺序。
    ══════════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════
-   Mobile — WindowManager-driven layout (≤768px)
-   Taskbar & desktop icons hide via their own @media rules.
-   ═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Desktop container fills full viewport (no taskbar gap) */
+  /* ═══════════════════════════════════════════════════
+     防止键盘弹出顶起页面：
+     - html/body 不可滚动
+     - 使用 100svh（small viewport height）而非 100dvh，
+       svh 不受键盘出现影响，避免布局跳动
+     ═══════════════════════════════════════════════════ */
+  html, body {
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     桌面容器：填满视口减去 Tab 栏（56px）
+     ═══════════════════════════════════════════════════ */
   .xp-desktop {
     position: fixed;
     inset: 0;
-    bottom: 0;
+    bottom: 56px;
     z-index: 1;
-    overflow: auto;
+    overflow: hidden;
   }
 
-  /* WindowManager windows: edge-to-edge, no frame decorations */
+  /* ═══════════════════════════════════════════════════
+     窗口：填满桌面区域，无边框/标题栏
+     Tab 栏代替窗口标题栏进行导航
+     ═══════════════════════════════════════════════════ */
   .xp-win {
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    width: 100vw !important;
-    height: 100dvh !important;
+    width: 100% !important;
+    height: 100% !important;
     left: 0 !important;
     top: 0 !important;
   }
 
-  /* Language toggle: show mobile floating button (Req 14.7) */
+  /* 隐藏窗口标题栏（Tab 栏代替导航） */
+  .xp-win-titlebar {
+    display: none !important;
+  }
+
+  /* 窗口内容填满整个窗口 */
+  .xp-win-body {
+    height: 100% !important;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     "更多"功能面板
+     ═══════════════════════════════════════════════════ */
+  .mobile-more-panel {
+    position: fixed;
+    inset: 0;
+    bottom: 56px;
+    z-index: 500;
+    background: #ece9d8;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 12px;
+    padding-top: calc(16px + env(safe-area-inset-top, 0));
+  }
+
+  .mobile-more-panel[hidden] {
+    display: none;
+  }
+
+  .mobile-more-panel h2 {
+    font-family: var(--font, Tahoma, sans-serif);
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 12px 4px;
+  }
+
+  .mobile-more-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 6px;
+    background: #fff;
+    border: 1px solid #d0cdb8;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font, Tahoma, sans-serif);
+    font-size: 14px;
+    color: #333;
+    -webkit-tap-highlight-color: transparent;
+    text-align: left;
+  }
+
+  .mobile-more-item:active {
+    background: #e8e5d5;
+  }
+
+  .mobile-more-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .mobile-more-label {
+    flex: 1;
+  }
+
+  .mobile-more-hint {
+    font-size: 13px;
+    color: #999;
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     语言切换 & Toast
+     ═══════════════════════════════════════════════════ */
+
+  /* Language toggle: show mobile floating button */
   .lang-toggle--mobile {
     display: block;
     position: fixed;
@@ -46,8 +141,8 @@
     font-size: 10px;
   }
 
-  /* Toast above bottom of screen (Req 14.8) */
+  /* Toast above tab bar */
   .toast {
-    bottom: 12px;
+    bottom: 68px;
   }
 }

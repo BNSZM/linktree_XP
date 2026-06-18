@@ -1,23 +1,14 @@
 /* ══════════════════════════════════════════════════════════════
    responsive.css — 移动端布局降级（≤768px）
 
-   移动端采用悬浮"开始"按钮 + 弹出菜单导航：
-     · 名片窗口自动打开（全屏），Start 按钮在左下角
-     · 窗口填满屏幕，无标题栏（Start 菜单代替导航）
-     · 键盘弹出时通过 visualViewport API 锁定高度，防止页面被顶起
-     · PDF 走 window.open 新标签页
-     · 装饰窗口标记为 unavailable，不打开
+   移动端极简模式：只显示名片，不加载壁纸/桌面元素。
+   桌面端（>768px）保持完整 XP 桌面体验不受影响。
 
    跨切面的移动端覆盖，须在所有基础规则之后引入以保持级联顺序。
    ══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* ═══════════════════════════════════════════════════
-     防止键盘弹出顶起页面：
-     html/body 锁定不可滚动，position:fixed 阻止 iOS Safari 的
-     自动滚动行为。键盘出现时 visualViewport 缩小，由 JS 动态
-     调整桌面容器高度（--mobile-vh 变量）。
-     ═══════════════════════════════════════════════════ */
+  /* ── 锁定页面：不可滚动，防止 iOS Safari 橡皮筋/键盘顶起 ── */
   html, body {
     overflow: hidden !important;
     height: 100% !important;
@@ -25,22 +16,26 @@
     width: 100% !important;
   }
 
-  /* ═══════════════════════════════════════════════════
-     桌面容器：填满视口（键盘弹出时由 JS 动态设置高度）
-     ═══════════════════════════════════════════════════ */
+  /* ── 隐藏壁纸（移动端不加载，节省带宽、加速首屏） ── */
+  .pixel-bliss {
+    display: none !important;
+  }
+
+  /* ── 隐藏桌面图标 ── */
+  .desktop-icons {
+    display: none !important;
+  }
+
+  /* ── 桌面容器：填满整个视口 ── */
   .xp-desktop {
     position: fixed;
     inset: 0;
     bottom: 0;
     z-index: 1;
     overflow: hidden;
-    /* JS 会动态设置 height: var(--mobile-vh) */
-    height: var(--mobile-vh, 100vh);
   }
 
-  /* ═══════════════════════════════════════════════════
-     窗口：填满桌面区域，无边框装饰
-     ═══════════════════════════════════════════════════ */
+  /* ── 窗口：填满屏幕，无边框 ── */
   .xp-win {
     border-radius: 0 !important;
     border: none !important;
@@ -51,34 +46,20 @@
     top: 0 !important;
   }
 
-  /* 隐藏窗口标题栏（Start 菜单代替导航） */
+  /* ── 隐藏标题栏 ── */
   .xp-win-titlebar {
     display: none !important;
   }
 
-  /* 窗口内容填满整个窗口 */
+  /* ── 窗口内容填满 ── */
   .xp-win-body {
     height: 100% !important;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* ═══════════════════════════════════════════════════
-     语言切换 & Toast
-     ═══════════════════════════════════════════════════ */
-
-  /* Language toggle: show mobile floating button */
-  .lang-toggle--mobile {
-    display: block;
-    position: fixed;
-    top: 6px; right: 6px;
-    z-index: 50;
-    height: 22px;
-    font-size: 10px;
-  }
-
-  /* Toast above Start button area */
+  /* ── Toast 居中底部 ── */
   .toast {
-    bottom: 56px;
+    bottom: 16px;
   }
 }

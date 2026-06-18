@@ -1,0 +1,36 @@
+# 生产部署：nginx（前端静态文件 + 反向代理）+ 后端代理服务
+# 用法：在项目根目录运行 docker compose up -d --build
+
+services:
+  # ── nginx：前端页面 + API 反向代理 ──
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # nginx 配置文件
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # 前端构建产物（Astro build 生成的静态文件）
+      - ./site/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - fastgpt-proxy
+
+  # ── 后端代理：FastGPT 转发 + 留言板 ──
+  fastgpt-proxy:
+    build: ./proxy
+    container_name: fastgpt-proxy
+    restart: unless-stopped
+    env_file: ./proxy/.env
+    environment:
+      - MESSAGES_FILE=/app/data/messages.json
+    expose:
+      - "8787"
+    volumes:
+      # 留言板数据持久卷：容器重启/重建后留言不丢失
+      - messages-data:/app/data
+
+volumes:
+  messages-data:

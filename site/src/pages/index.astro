@@ -18,7 +18,7 @@ const ss = DEFAULT_LANG;
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="description" content={t(ss, "meta.desc")} />
     <title set:html={t(ss, "meta.title")}></title>
   </head>
@@ -70,7 +70,7 @@ const ss = DEFAULT_LANG;
         typeof window !== "undefined" && window.innerWidth <= 768;
 
       // ── 移动端降级（任务 23.1）：拦截 openOrFocus ──
-      //   · PDF 类窗口 → window.open 新标签页（Req 14.4）
+      //   · PDF 类窗口 → 新标签页打开（Req 14.4）
       //   · 装饰窗口   → 不可用，不打开（Req 14.6）
       //   · 其余窗口   → 正常 WindowManager 流程（拖动/调整尺寸/最大化
       //                   由 WM 内部 isMobile() 守卫禁用）
@@ -80,7 +80,16 @@ const ss = DEFAULT_LANG;
         if (!appDef) return origFn.call(wmInst, appId, opts);
         const mb = appDef.mobile && appDef.mobile.behavior;
         if (mb === "newtab" && appDef.content && appDef.content.pdfUrl) {
-          window.open(appDef.content.pdfUrl, "_blank", "noopener");
+          // 使用临时 <a> 元素代替 window.open()，
+          // 避免 iOS Safari 弹窗拦截；click() 在同一调用栈内同步执行。
+          const a = document.createElement("a");
+          a.href = appDef.content.pdfUrl;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
           return null;
         }
         if (mb === "unavailable") return null;

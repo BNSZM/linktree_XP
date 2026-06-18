@@ -35,27 +35,26 @@
     overflow: hidden;
   }
 
-  /* ── 窗口：填满屏幕，无边框 ── */
+  /* ── 窗口：填满屏幕，保留 XP 标题栏与边框 ── */
   .xp-win {
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
     width: 100% !important;
     height: 100% !important;
     left: 0 !important;
     top: 0 !important;
+    /* 保留 border, border-radius, box-shadow —— 用户希望看到窗口外框 */
   }
 
-  /* ── 隐藏标题栏 ── */
-  .xp-win-titlebar {
-    display: none !important;
-  }
-
-  /* ── 窗口内容填满 ── */
+  /* ── 窗口内容填满（flex 布局自动扣除标题栏高度） ── */
   .xp-win-body {
     height: 100% !important;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── iOS Safari：输入框 font-size < 16px 时自动缩放页面 ── */
+  /*    强制所有输入元素 ≥ 16px，阻止该行为                  ── */
+  input, textarea, select {
+    font-size: 16px !important;
   }
 
   /* ── Toast 居中底部 ── */

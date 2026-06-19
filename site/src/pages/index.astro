@@ -21,6 +21,9 @@ const ss = DEFAULT_LANG;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="description" content={t(ss, "meta.desc")} />
     <title set:html={t(ss, "meta.title")}></title>
+    <!-- Umami 网站统计（自托管，隐私友好，不使用 Cookie） -->
+    <!-- 部署后在 Umami 面板创建网站，获取 website-id 替换下方 TODO -->
+    <script defer src="https://umami.perryuan.xyz/script.js" data-website-id="TODO-REPLACE-WITH-UMAMI-ID"></script>
   </head>
   <body>
     <!-- ══ 像素风 Bliss 桌面背景（canvas 渲染） ══ -->

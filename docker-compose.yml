@@ -1,4 +1,4 @@
-# 生产部署：nginx（前端静态文件 + 反向代理）+ 后端代理服务
+# 生产部署：nginx（前端静态文件 + 反向代理）+ 后端代理服务 + Umami 网站统计
 # 用法：在项目根目录运行 docker compose up -d --build
 
 services:
@@ -17,6 +17,7 @@ services:
       - ./site/dist:/usr/share/nginx/html:ro
     depends_on:
       - fastgpt-proxy
+      - umami
 
   # ── 后端代理：FastGPT 转发 + 留言板 ──
   fastgpt-proxy:
@@ -32,5 +33,37 @@ services:
       # 留言板数据持久卷：容器重启/重建后留言不丢失
       - messages-data:/app/data
 
+  # ── Umami 网站统计 —— 自托管，隐私友好 ──
+  umami:
+    image: ghcr.io/umami-software/umami:latest
+    container_name: umami
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://umami:umami_db_pass@umami-db:5432/umami
+      APP_SECRET: d64a4c58230addc5c65a2c744a1157e20641b3b2b413f09d33a27d5335bf6e7b
+    expose:
+      - "3000"
+    depends_on:
+      umami-db:
+        condition: service_healthy
+
+  # ── Umami 数据库（PostgreSQL） ──
+  umami-db:
+    image: postgres:15-alpine
+    container_name: umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami_db_pass
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   messages-data:
+  umami-db-data:
